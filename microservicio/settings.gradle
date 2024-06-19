@@ -1,0 +1,4 @@
+rootProject.name = 'microservicio'
+include 'domain'
+include 'application'
+include 'infrastructure'

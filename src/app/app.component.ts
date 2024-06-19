@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal, effect, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
@@ -27,6 +27,28 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
+  clientes = [];
   title = 'prueba-tecnica-alianza';
-  search = '';
+  search = signal<string>('');
+  clearSearch() {
+    this.search.set('');
+  }
+  async searchClients(search: string) {
+    const body = JSON.stringify({
+      sharedKey: search,
+    });
+    const response = await fetch('http://localhost:8080/clientes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    });
+    const json = await response.json();
+    console.log(json);
+    this.clientes = json;
+  }
+  clientsEffect = effect(async () => {
+    await this.searchClients(this.search());
+  });
 }
